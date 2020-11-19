@@ -56,9 +56,9 @@
         type="text"
         class="form-control"
         placeholder="清醒的人爱说胡话"
-        aria-describedby="basic-addon1"
         v-model="Mname"
         @keyup.enter="add"
+        v-focus
       />
       <ul class="list-group">
         <li class="list-group-item" v-for="item in list">
@@ -89,9 +89,16 @@
       const vm = new Vue({
         el: '#app',
         data: {
-          msg: '我的歌单',
+          msg: '我的歌单11',
           list: [],
           Mname: '',
+        },
+        directives: {
+          focus: {
+            inserted(el) {
+              el.focus();
+            },
+          },
         },
         created() {
           // 获取列表
