@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./bootstrap.min.css" />
+    <style>
+      #app {
+        max-width: 600px;
+        margin: 100px auto;
+      }
+      #app h1 {
+        text-align: center;
+      }
+      body {
+        width: 100%;
+      }
+      ul {
+        list-style: none;
+      }
+      .btn {
+        cursor: pointer;
+        position: absolute;
+        right: 0.8em;
+        top: 0.8em;
+        border: none;
+        color: #ff6700;
+        padding: 0.5em 0.5em;
+        font-size: 12px;
+      }
+
+      .btn:active {
+        border: none;
+      }
+
+      .btn:hover,
+      .footerBtn {
+        background-color: #ff6700;
+        color: #fff;
+      }
+      .footer {
+        height: 60px;
+        display: flex;
+        width: 100%;
+        justify-content: space-around;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h1>{{msg}}</h1>
+      <input
+        type="text"
+        class="form-control"
+        placeholder="清醒的人爱说胡话"
+        aria-describedby="basic-addon1"
+        v-model="Mname"
+        @keyup.enter="add"
+      />
+      <ul class="list-group">
+        <li class="list-group-item" v-for="item in list">
+          {{item.name}}
+          <button class="btn" title="移出歌单" @click="del(item.id)">
+            删除
+          </button>
+        </li>
+      </ul>
+      <ul class="footer">
+        <li v-if="list.length !=0">总共{{list.length}}条数据</li>
+        <li>
+          <button
+            title="移出歌单"
+            @click="clear"
+            class="footerBtn"
+            v-if="list.length !=0"
+          >
+            清空所有数据
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <script src="./vue.js"></script>
+    <script src="./axios.js"></script>
+    <script>
+      const vm = new Vue({
+        el: '#app',
+        data: {
+          msg: '我的歌单',
+          list: [],
+          Mname: '',
+        },
+        created() {
+          // 获取列表
+          // 在当前实例中调用methods中定义的方法，this.方法名
+          this.getlist();
+        },
+        methods: {
+          // 获取列表
+          getlist() {
+            // 发送获取请求
+            axios.get('http://localhost:3000/list').then((res) => {
+              this.list = res.data;
+            });
+          },
+          add() {
+            axios
+              .post('http://localhost:3000/list', { name: this.Mname })
+              .then((res) => {
+                this.Mname = '';
+                this.getlist();
+              });
+          },
+          del(id) {
+            axios
+              .delete('http://localhost:3000/list/' + id)
+              .then((res) => this.getlist());
+          },
+          clear() {
+            this.list = [];
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
