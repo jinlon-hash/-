@@ -56,9 +56,9 @@
         type="text"
         class="form-control"
         placeholder="清醒的人爱说胡话"
-        v-model="Mname"
+        aria-describedby="basic-addon1"
+        v-model.trim="Mname"
         @keyup.enter="add"
-        v-focus
       />
       <ul class="list-group">
         <li class="list-group-item" v-for="item in list">
@@ -89,16 +89,9 @@
       const vm = new Vue({
         el: '#app',
         data: {
-          msg: '我的歌单11',
+          msg: '我的歌单',
           list: [],
           Mname: '',
-        },
-        directives: {
-          focus: {
-            inserted(el) {
-              el.focus();
-            },
-          },
         },
         created() {
           // 获取列表
@@ -109,13 +102,14 @@
           // 获取列表
           getlist() {
             // 发送获取请求
-            axios.get('http://localhost:3000/list').then((res) => {
+            axios.get('http://localhost:3000/music').then((res) => {
               this.list = res.data;
             });
           },
           add() {
+            if (!this.Mname) return;
             axios
-              .post('http://localhost:3000/list', { name: this.Mname })
+              .post('http://localhost:3000/music', { name: this.Mname })
               .then((res) => {
                 this.Mname = '';
                 this.getlist();
@@ -123,7 +117,7 @@
           },
           del(id) {
             axios
-              .delete('http://localhost:3000/list/' + id)
+              .delete('http://localhost:3000/music/' + id)
               .then((res) => this.getlist());
           },
           clear() {
